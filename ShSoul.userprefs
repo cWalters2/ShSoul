@@ -1,0 +1,35 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\MainMenuHandler.cs">
+    <Files>
+      <File FileName="Assets\Standard Assets\Scripts\Fighter.cs" Line="318" Column="14" />
+      <File FileName="Assets\Standard Assets\Scripts\FighterHelper.cs" Line="107" Column="62" />
+      <File FileName="Assets\Standard Assets\Scripts\AttkBox.cs" Line="1" Column="1" />
+      <File FileName="Assets\Standard Assets\Scripts\AttkTrack.cs" Line="1" Column="1" />
+      <File FileName="Assets\Standard Assets\Scripts\Stage.cs" Line="284" Column="1" />
+      <File FileName="Assets\Standard Assets\Scripts\plYara.cs" Line="174" Column="54" />
+      <File FileName="Assets\MainMenuHandler.cs" Line="23" Column="14" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Assembly-CSharp" expanded="True">
+            <Node name="MainMenuHandler.cs" selected="True" />
+          </Node>
+          <Node name="Assembly-CSharp-firstpass" expanded="True">
+            <Node name="Standard Assets" expanded="True">
+              <Node name="Scripts" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint hitAction="PrintExpression" traceExpression="{stats.motion.move}" file="C:\Users\ChrisMan\Documents\ShSoul\Assets\Standard Assets\Scripts\Fighter.cs" line="1274" />
+      <Breakpoint hitAction="PrintExpression" traceExpression="{stats.motion.vel.x}" file="C:\Users\ChrisMan\Documents\ShSoul\Assets\Standard Assets\Scripts\Fighter.cs" line="1277" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
