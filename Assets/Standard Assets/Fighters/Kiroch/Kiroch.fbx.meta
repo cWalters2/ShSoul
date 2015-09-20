@@ -258,6 +258,9 @@ ModelImporter:
     7400126: Guard
     7400128: Throw
     7400130: EdgeBalance
+    7400132: Laydown
+    7400134: WUAttack
+    7400136: WURoll
     9500000: //RootNode
     13700000: Kiroch
   materials:

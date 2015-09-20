@@ -436,6 +436,9 @@ ModelImporter:
     7400124: EdgeBalance
     7400126: SPAf
     7400128: SpotDodgeold
+    7400130: Laydown
+    7400132: WUAttack
+    7400134: WURoll
     9500000: //RootNode
     13700000: Circle_001
     13700002: Yara

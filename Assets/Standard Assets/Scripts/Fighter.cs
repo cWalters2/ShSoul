@@ -2113,8 +2113,10 @@ public class Fighter : MonoBehaviour {
 		//called when the player has taken a hit
 		atkTmr.ResetTimer ();
 		fHelper.nextAnim="";
-		if (InState (EDGEGRAB))
+		if (InState (EDGEGRAB)) {
 						state = FALL;
+						stats.edgegrab.delayTmr.SetTimer ();
+				}
 	//	int ifr = fHelper.IntFacingRight ();
 		if (stats.flags.invuln)
 						return;//dodged
@@ -2700,15 +2702,15 @@ public class Fighter : MonoBehaviour {
 
 				stats.jump.airJumps=0;
 				if(!stats.tumble.tmr.IsReady ()){
-					
-					
+					float rollVel=Mathf.Sqrt(stats.motion.vel.SqDistFromOrigin());
+
+					if(stats.motion.vel.x<0)
+						rollVel = -rollVel;
 					if((stats.motion.vel.x*fHelper.IntFacingRight() >0)&&(stats.land.IsReady()))
 						FaceRightIm (!fHelper.IsFacingRight());
 					stats.land.SetTimer(fHelper.Animate("Tbland", false, 0));
-						stats.walk.gndSpeed = stats.motion.vel.x; 
-					float rollVel=Mathf.Sqrt(stats.motion.vel.SqDistFromOrigin());
-					if(stats.motion.vel.x<0)
-						rollVel = -rollVel;
+						
+
 					stats.walk.gndSpeed=rollVel;
 					string st = "rollVel: ";
 					st += rollVel + "/" + stats.motion.vel.x;
