@@ -281,11 +281,11 @@ public class Stage : MonoBehaviour {
 				float rbdVec = tBox.GetAng(polyIndex, hitIndex);
 				if(rbdVec<=-Mathf.PI)//keep within proper bounds
 					rbdVec+=(2*Mathf.PI);
-				if(!plr.Rebound(rbdVec)){
+				if(plr.Rebound(rbdVec)){
 					plr.Land(flAng);
-					plr.stats.walk.gndSpeed=wallDist;
-					plr.stats.motion.vel.x -= Mathf.Cos(wallAng)*wallDist*Mathf.Cos(axAng);
-					plr.stats.motion.vel.y -= Mathf.Cos(wallAng)*wallDist*Mathf.Sin(axAng);
+				//	plr.stats.walk.gndSpeed=wallDist;
+				//	plr.stats.motion.vel.x -= Mathf.Cos(wallAng)*wallDist*Mathf.Cos(axAng);
+					//plr.stats.motion.vel.y -= Mathf.Cos(wallAng)*wallDist*Mathf.Sin(axAng);
 
 				}
 			}else{//non-reounding

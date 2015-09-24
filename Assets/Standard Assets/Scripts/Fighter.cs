@@ -325,7 +325,11 @@ public class Fighter : MonoBehaviour {
 			float lStart=stats.walk.loopStart;
 			if((!fHelper.anim.GetCurrentAnimatorStateInfo(0).IsName("GetUp"))&& 
 			   (!stats.flags.mBusy)&&(!stats.flags.aBusy)&&(Mathf.Abs(stats.walk.gndSpeed)<LOWTHRESH)){
-				if(!fHelper.anim.GetCurrentAnimatorStateInfo(0).IsName("Idle")&&(!fHelper.anim.GetCurrentAnimatorStateInfo(0).IsName("EdgeBalance"))&&(state!=CROUCH)){
+                if ((!fHelper.InAnim("EdgeBalance")) && (leftLip != 0) && (stats.motion.pos.x + stats.size.x / 2 > leftLip))
+                    fHelper.Animate("EdgeBalance", true, 0);
+                else if ( (!fHelper.InAnim("EdgeBalance"))&& (rightLip != 0) && (stats.motion.pos.x - stats.size.x / 2 < rightLip))
+                    fHelper.Animate("EdgeBalance", true, 0);
+                else if (!fHelper.anim.GetCurrentAnimatorStateInfo(0).IsName("Idle")&&(!fHelper.anim.GetCurrentAnimatorStateInfo(0).IsName("EdgeBalance"))&&(state!=CROUCH)){
 					fHelper.Animate("Idle", true, 0);
 					fHelper.animLoopStart=0;
 					state=IDLE;
@@ -1492,7 +1496,6 @@ public class Fighter : MonoBehaviour {
 			}
 		}
 		
-		
 		if((gCont.TappedThisFrame(GameController.UP))||(gCont.TappedThisFrame(GameController.D))){//UP
 			if(!EdgeClimbCheck(stats.motion.pos, gCont.TappedThisFrame(GameController.D))){ //check for edgeclimb
 				if(JumpCheck(stats.jump.tmr.GetLen())){//will jump, if true
@@ -1508,14 +1511,9 @@ public class Fighter : MonoBehaviour {
 							fHelper.Animate ("Jump", false, 0);
 							stats.motion.vel.y = stats.jump.airJumpVel;
                         }
-
-							
-						
-						stats.motion.vel.x = gCont.lStick.x*stats.walk.maxSpeed/2;
-						
-						
+						stats.motion.vel.x = gCont.lStick.x*stats.walk.maxSpeed/2;	
 					}
-				}else if((!stats.tumble.tmr.IsReady())&&(!fHelper.airborne)&&(stats.walk.gndSpeed<LOWTHRESH)){
+				}else if((!stats.tumble.tmr.IsReady())&&(!fHelper.airborne)&&(stats.walk.gndSpeed<LOWTHRESH)){//OTG
 					
 					GetUp();
 				}
@@ -1681,7 +1679,8 @@ public class Fighter : MonoBehaviour {
 		if (fHelper.IsFacingRight () != fR) {
 						fHelper.Pivot (180);
 						fHelper.FaceRight (fR);
-				}
+      
+                }
 	
 	}
 	public void Roll(){
@@ -1748,6 +1747,7 @@ public class Fighter : MonoBehaviour {
 					FighterPivot();
 				else if(( state== WALK)&&(stats.jump.tmr.IsReady())&&(!fHelper.anim.GetCurrentAnimatorStateInfo(0).IsName("Walk"))){
 					fHelper.UnTranslate();
+
 					fHelper.Animate("Walk", true, 0);
 					fHelper.animLoopStart=wlStart;
 				}else if(( state== DASH)&&(stats.jump.tmr.IsReady())&&(!fHelper.anim.GetCurrentAnimatorStateInfo(0).IsName("Run")&&(!fHelper.anim.GetCurrentAnimatorStateInfo(0).IsName("Halt")))){
@@ -1831,21 +1831,21 @@ public class Fighter : MonoBehaviour {
 				walkCoeff=-walkCoeff;
 				if((rightLip!=0)&&(stats.motion.pos.x-stats.size.x/2<rightLip)){
 					walkCoeff = walkCoeff/13;
-					if(!fHelper.InAnim("EdgeBalance")&&(!fHelper.IsFacingRight()))
-					fHelper.Animate("EdgeBalance", true, 0);
+				 
 					if(GetVel().x<0)
 						stats.motion.vel.x=0;
 				}
-			}else{
+			}else if ((gCont.lStick.x > 0))
+            {
 				if((leftLip!=0)&&(stats.motion.pos.x+stats.size.x/2>leftLip)){
 					walkCoeff = walkCoeff/13;
-					if(GetVel().x>0)
-						stats.motion.vel.x=0;
-					if(!fHelper.InAnim("EdgeBalance")&&(fHelper.IsFacingRight()))
-					fHelper.Animate("EdgeBalance", true, 0);
-				}
-
-			}
+					
+					 
+                    if (GetVel().x > 0)
+                        stats.motion.vel.x = 0;
+                }
+              
+            }
 
 			if((Mathf.Abs(stats.walk.gndSpeed) < Mathf.Abs(gCont.lStick.x*stats.walk.maxSpeed))){
 				if(( state!= GUARD)&&( state!= DODGE)){		
@@ -2240,6 +2240,7 @@ public class Fighter : MonoBehaviour {
 			//tumble timer
 			if (!stats.tumble.tmr.IsReady()) {
 				if (stats.tumble.tmr.RunTimer (timeLapsed))//stop anim + set state idle
+                if(!fHelper.airborne)
                     GetUp ();
             } else
 			stats.tumble.tmr.ResetTimer ();
@@ -2761,9 +2762,11 @@ public class Fighter : MonoBehaviour {
 	
 	}
 	public bool Rebound(float rAng){
-		//returns true of a rebound occurs	
-		//called automatically in Stage.CollisionDetect(...)
-		//returns false when no rebound occurs
+        //returns true of a rebound occurs	
+        //called automatically in Stage.CollisionDetect(...)
+        //returns false when no rebound occurs
+        if (!fHelper.airborne)
+            return false;
 		SPoint nVec = new SPoint(Mathf.Cos(rAng-Mathf.PI/2), Mathf.Sin(rAng-Mathf.PI/2));//should be normalized already
 		float two_n_dot_d = 2*(nVec.x*GetVel().x + nVec.y*GetVel().y);
 		SPoint rVec = new SPoint(GetVel().x - two_n_dot_d*nVec.x, GetVel().y - two_n_dot_d*nVec.y);
@@ -2786,13 +2789,15 @@ public class Fighter : MonoBehaviour {
 		SPoint sVec = new SPoint ();
 		sVec.x = Mathf.Cos (rAng)*fVel;
 		sVec.y = Mathf.Sin (rAng)*fVel;
-		if (GetVel ().x > 0)
-			sVec.x = sVec.x * -1;//for facing in opposite direction
+	//	if (GetVel ().x > 0)
+	//		sVec.x = sVec.x * -1;//for facing in opposite direction
 
 
 		SPoint cVel=new SPoint();//to combine 
 		cVel.x = rVec.x*b_r+sVec.x*(1.0f-b_r);
 		cVel.y = rVec.y*b_r+sVec.y*(1.0f-b_r);
+        if (cVel.x < 0)
+            cVel.x = cVel.x;
 		cVel.x = cVel.x * tu_bncRat;//bounce ratio here
 		cVel.y = cVel.y * tu_bncRat;//bounce ratio here
 

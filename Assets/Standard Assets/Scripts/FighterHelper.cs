@@ -153,8 +153,13 @@ public void SetAnimSpeed(float speed){
 	}
 
 public void FaceRight(bool t){
-	
-			isFacingRight = t;
+        int faceR = 1;
+        if (!t)
+            faceR = -1;
+		isFacingRight = t;
+        TR.localScale = new Vector3(faceR, 1, 1);
+        
+            
 
 }
 	public void Pivot(float ang){
