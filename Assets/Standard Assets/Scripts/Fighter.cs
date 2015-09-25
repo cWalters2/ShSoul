@@ -708,9 +708,9 @@ public class Fighter : MonoBehaviour {
 		//add poitional value (for wgt=0) into data
 		opp.x=plr.GetPos().x-GetPos().x;//used to store the centerpoint
 		if(fHelper.IsFacingRight())      //for input into data
-			opp.x+=(aBox.centre.pos.x);
-		else
 			opp.x-=(aBox.centre.pos.x);
+		else
+			opp.x+=(aBox.centre.pos.x);
 		opp.y=plr.GetPos().y-GetPos().y+aBox.centre.pos.y;	
 		data.SetAVals(opp);
 		il = aBox.iLength;
