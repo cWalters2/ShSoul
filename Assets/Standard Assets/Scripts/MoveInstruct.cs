@@ -62,8 +62,13 @@ public class MoveInstruct  {
 					ExecAction(fh, st, cInd);
 
 				}
+                else if (act[cInd] == AIRHOVER)
+                {
+                    ExecAction(fh, st, cInd);
 
-			}
+                }
+
+            }
 		}
 	}
 

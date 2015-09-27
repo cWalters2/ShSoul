@@ -14,8 +14,9 @@ public class Fighter : MonoBehaviour {
 	public const float TUMBLE_FRICRAT=0.3f;
 	public const float GUARDREC = 20.0f;
 	public const int LAGCANCEL = 3;
-	//editable physics vars
-	public Stats stats=new Stats();
+    public const float DASH_TIME = 0.2f;
+    //editable physics vars
+    public Stats stats=new Stats();
 	protected int state;
 	public AudioClip[] audClips;
 	public ParticleSystem[] effects;
@@ -102,6 +103,7 @@ public class Fighter : MonoBehaviour {
 	protected  Vector3 NORM_ORIENT;
 	public int plNum;
 	protected float magScale;
+    protected STimer dashTmr;
 	protected float lastFlash=0;
 	bool ledgeJumpFlag=false;
 	public FighterHelper fHelper;
@@ -132,6 +134,10 @@ public class Fighter : MonoBehaviour {
 	protected STimer debugFadeTmr;
 	protected STimer stunTimer;
 
+    STimer hovTmr;
+    SPoint hovDir;
+    SPoint hovFin;//for interpolation
+    float hovRec; //reciprocal for hovering.
 	protected AttkData hitHolder;
 	public float throwTime;
 	public float grabTime;
@@ -164,7 +170,31 @@ public class Fighter : MonoBehaviour {
 	public void _AirBurstY(float y){
 		stats.motion.vel.y = y;
 	}
-	protected void Awake () {
+    public void _Hover(float h) {
+       
+        hovTmr.SetTimer(h);
+    }
+    public void _AirHoverX(float x)
+    {
+        hovDir.x = x;
+        if (hovFin.x == 0)
+            hovFin.x = x;
+    }
+    public void _AirHoverY(float y)
+    {
+        hovDir.y = y;
+        if (hovFin.y == 0)
+            hovFin.y = y;
+    }
+    public void _AirHovFinX(float x)
+    {
+        hovFin.x = x;
+    }
+    public void _AirHovFinY(float y)
+    {
+        hovFin.y = y;
+    }
+    protected void Awake () {
 
 
 
@@ -209,7 +239,12 @@ public class Fighter : MonoBehaviour {
 	public void Start(){
 		//stats=new Stats();
 		FindConsole ();
-		rollInvOn = new STimer ();
+        hovTmr = new STimer(1.0f);
+        hovDir = new SPoint(0, 0);
+        hovFin = new SPoint(0, 0);
+        hovRec = 1;
+        dashTmr = new STimer(DASH_TIME);
+        rollInvOn = new STimer ();
 		rollInvOff = new STimer ();
 		debugFadeTmr = new STimer (0.5f);
 		atkTmr = new STimer ();
@@ -946,13 +981,18 @@ public class Fighter : MonoBehaviour {
 		else
 			return false;
 	}
-	public bool PerAttk(){
-		if (InState ( DASH))
-						StartAttack (DATK, "DATK");
-				else if (fHelper.airborne)
-						Aerial ();
-				else
-						return false;
+	public bool PerAttk(){//perhipheral
+        if (InState(DASH)) {
+            if (!dashTmr.IsReady())
+            {
+                state = WALK;
+                return false;
+            }
+			StartAttack (DATK, "DATK");
+        }else if (fHelper.airborne)
+					Aerial ();
+		else
+				return false;
 		return true;
     }
 	public void  A(){
@@ -1660,7 +1700,9 @@ public class Fighter : MonoBehaviour {
 	}
 	public bool Dash(){
 		if((( state==IDLE)||( state== WALK))){
+            dashTmr.SetTimer();
 			 state= DASH;
+
 			fHelper.Animate("Run", true, 0);
 			
 			stats.walk.shuffle.SetTimer();
@@ -2149,7 +2191,23 @@ public class Fighter : MonoBehaviour {
         //TakeHit (hit);
 	}
 	public void RunTimers(float timeLapsed){
-		if(stats.jump.tmr.RunTimer(timeLapsed)){
+        dashTmr.RunTimer(timeLapsed);
+        if (hovTmr.RunTimer(timeLapsed)) {
+            hovDir.x = 0;
+            hovDir.y = 0;
+            hovFin.y = 0;
+            hovFin.x = 0;
+        }
+        else if (!hovTmr.IsReady())
+        {
+            fHelper.airborne = true;
+            float rat = hovTmr.tmr / hovTmr.GetLen();
+            stats.motion.accl.y = stats.grav;
+            stats.motion.vel.x = (1.0f-rat)*hovDir.x  + rat*hovFin.x;
+            stats.motion.vel.y = (1.0f-rat) * hovDir.y + rat * hovFin.y;
+            hovRec = 1;
+        }
+        if (stats.jump.tmr.RunTimer(timeLapsed)){
 			if(!fHelper.airborne){
 				Jump();
 			}
@@ -2422,17 +2480,28 @@ public class Fighter : MonoBehaviour {
 								moveCont[atInd].SetInstruct(cInd, time, "BRAKE",  val);
 							else if(uniFlag)
 								uniMove.SetInstruct(cInd, time, "BRAKE",  val);
-						}else if(FirstNCharChk(lPc, "airbrake")){
+						}else if(FirstNCharChk(lPc, "airhover")){
 							lPc = lPc.Substring(lPc.IndexOf(" ")+1);
 							float xV = float.Parse (lPc.Substring(0, lPc.IndexOf (" ")));
 							lPc = lPc.Substring(lPc.IndexOf(" ")+1);
                             float yV = float.Parse (lPc);
 							if(atInd>=0)
-								moveCont[atInd].SetInstruct(cInd, time, "AIRBRAKE",   new SPoint(xV, yV));
+								moveCont[atInd].SetInstruct(cInd, time, "AIRHOVER",   new SPoint(xV, yV));
 							else if(uniFlag)
-								uniMove.SetInstruct(cInd, time, "AIRBRAKE",   new SPoint(xV, yV));
+								uniMove.SetInstruct(cInd, time, "AIRHOVER",   new SPoint(xV, yV));
                         }
-                        cInd++;
+                else if (FirstNCharChk(lPc, "airbrake"))
+                {
+                    lPc = lPc.Substring(lPc.IndexOf(" ") + 1);
+                    float xV = float.Parse(lPc.Substring(0, lPc.IndexOf(" ")));
+                    lPc = lPc.Substring(lPc.IndexOf(" ") + 1);
+                    float yV = float.Parse(lPc);
+                    if (atInd >= 0)
+                        moveCont[atInd].SetInstruct(cInd, time, "AIRBRAKE", new SPoint(xV, yV));
+                    else if (uniFlag)
+                        uniMove.SetInstruct(cInd, time, "AIRBRAKE", new SPoint(xV, yV));
+                }
+                cInd++;
                     }
                     if(FirstNCharChk(line, "</ATTACK>")){
 						atInd=-1;
@@ -2666,9 +2735,11 @@ public class Fighter : MonoBehaviour {
 		if((!InState( FALL))&&(!InState( EDGECLIMB)))
 		{
 			 state= FALL;
-			if(!stats.tumble.tmr.IsReady())
+			if(stats.tumble.tmr.IsReady())
 				fHelper.Animate("Fall", true, 0);
-		}
+            else
+                fHelper.Animate("Tumble", true, 0);
+        }
 		atkTmr.ResetTimer ();
 		fHelper.actionTmr.ResetTimer ();
 		rightLip = 0;
