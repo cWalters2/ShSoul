@@ -6,10 +6,12 @@ time 0.7 burst 2
 time 0.3 airbrake 0.9 0.9
 </ATTACK>
 <UNIQUE:SPB_L>
-time 0.1 airburst 0 3
+time 0.4 wait
+time 0.2 airhover 1 4
+cons end_pt 0 2
 </UNIQUE>
 <UNIQUE:SPB_M>
-time 0.1 airburst 0.6 5
+time 0.2 airhover 0.6 5
 </UNIQUE>
 <UNIQUE:SPB_H>
 time 0.1 airburst 1 6

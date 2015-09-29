@@ -2442,56 +2442,64 @@ public class Fighter : MonoBehaviour {
 						//instantiate moveset instructions
 						
 					}
-					if(FirstNCharChk(line, "time")){
-						//moveCont.
+            if (FirstNCharChk(line, "time")) {
+                //moveCont.
 
-						lPc = line.Substring(5);
-						float time = float.Parse (lPc.Substring(0, lPc.IndexOf(" ")));
-						lPc = lPc.Substring(lPc.IndexOf(" ")+1);
-
-						if(FirstNCharChk(lPc, "burst")){
-							lPc = lPc.Substring(lPc.IndexOf(" ")+1);
-							float val = float.Parse (lPc);
-							if(atInd>=0)
-								moveCont[atInd].SetInstruct(cInd, time, "BURST",  val);
-							else if(uniFlag)
-								uniMove.SetInstruct(cInd, time, "BURST",  val);
-						}else if(FirstNCharChk(lPc, "airburst")){
-							lPc = lPc.Substring(lPc.IndexOf(" ")+1);
-							float xV = float.Parse (lPc.Substring(0, lPc.IndexOf (" ")));
-							lPc = lPc.Substring(lPc.IndexOf(" ")+1);
-                            float yV = float.Parse (lPc);
-                            if(atInd>=0)
-                                moveCont[atInd].SetInstruct(cInd, time, "AIRBURST",  new SPoint(xV, yV));
-							else if(uniFlag)
-								uniMove.SetInstruct(cInd, time, "AIRBURST",  new SPoint(xV, yV));
-                        }
-						else if(FirstNCharChk(lPc, "slide")){
-							lPc = lPc.Substring(lPc.IndexOf(" ")+1);
-							float val = float.Parse (lPc);
-							if(atInd>=0)
-								moveCont[atInd].SetInstruct(cInd, time, "SLIDE",  val);
-							else if(uniFlag)
-								uniMove.SetInstruct(cInd, time, "SLIDE",  val);
-						}else if(FirstNCharChk(lPc, "brake")){
-							lPc = lPc.Substring(lPc.IndexOf(" ")+1);
-							float val = float.Parse (lPc);
-							if(atInd>=0)
-								moveCont[atInd].SetInstruct(cInd, time, "BRAKE",  val);
-							else if(uniFlag)
-								uniMove.SetInstruct(cInd, time, "BRAKE",  val);
-						}else if(FirstNCharChk(lPc, "airhover")){
-							lPc = lPc.Substring(lPc.IndexOf(" ")+1);
-							float xV = float.Parse (lPc.Substring(0, lPc.IndexOf (" ")));
-							lPc = lPc.Substring(lPc.IndexOf(" ")+1);
-                            float yV = float.Parse (lPc);
-							if(atInd>=0)
-								moveCont[atInd].SetInstruct(cInd, time, "AIRHOVER",   new SPoint(xV, yV));
-							else if(uniFlag)
-								uniMove.SetInstruct(cInd, time, "AIRHOVER",   new SPoint(xV, yV));
-                        }
-                else if (FirstNCharChk(lPc, "airbrake"))
+                lPc = line.Substring(5);
+                float time = float.Parse(lPc.Substring(0, lPc.IndexOf(" ")));
+                lPc = lPc.Substring(lPc.IndexOf(" ") + 1);
+                if (FirstNCharChk(lPc, "wait"))
                 {
+                    
+                   
+                    if (atInd >= 0)
+                        moveCont[atInd].SetInstruct(cInd, time, "WAIT", 0);
+                    else if (uniFlag)
+                        uniMove.SetInstruct(cInd, time, "WAIT", 0);
+                }
+                if (FirstNCharChk(lPc, "burst")) {
+                    lPc = lPc.Substring(lPc.IndexOf(" ") + 1);
+                    float val = float.Parse(lPc);
+                    if (atInd >= 0)
+                        moveCont[atInd].SetInstruct(cInd, time, "BURST", val);
+                    else if (uniFlag)
+                        uniMove.SetInstruct(cInd, time, "BURST", val);
+                } else if (FirstNCharChk(lPc, "airburst")) {
+                    lPc = lPc.Substring(lPc.IndexOf(" ") + 1);
+                    float xV = float.Parse(lPc.Substring(0, lPc.IndexOf(" ")));
+                    lPc = lPc.Substring(lPc.IndexOf(" ") + 1);
+                    float yV = float.Parse(lPc);
+                    if (atInd >= 0)
+                        moveCont[atInd].SetInstruct(cInd, time, "AIRBURST", new SPoint(xV, yV));
+                    else if (uniFlag)
+                        uniMove.SetInstruct(cInd, time, "AIRBURST", new SPoint(xV, yV));
+                }
+                else if (FirstNCharChk(lPc, "slide")) {
+                    lPc = lPc.Substring(lPc.IndexOf(" ") + 1);
+                    float val = float.Parse(lPc);
+                    if (atInd >= 0)
+                        moveCont[atInd].SetInstruct(cInd, time, "SLIDE", val);
+                    else if (uniFlag)
+                        uniMove.SetInstruct(cInd, time, "SLIDE", val);
+                } else if (FirstNCharChk(lPc, "brake")) {
+                    lPc = lPc.Substring(lPc.IndexOf(" ") + 1);
+                    float val = float.Parse(lPc);
+                    if (atInd >= 0)
+                        moveCont[atInd].SetInstruct(cInd, time, "BRAKE", val);
+                    else if (uniFlag)
+                        uniMove.SetInstruct(cInd, time, "BRAKE", val);
+                } else if (FirstNCharChk(lPc, "airhover")) {
+                    lPc = lPc.Substring(lPc.IndexOf(" ") + 1);
+                    float xV = float.Parse(lPc.Substring(0, lPc.IndexOf(" ")));
+                    lPc = lPc.Substring(lPc.IndexOf(" ") + 1);
+                    float yV = float.Parse(lPc);
+                   
+                    if (atInd >= 0)
+                        moveCont[atInd].SetInstruct(cInd, time, "AIRHOVER", new SPoint(xV, yV));
+                    else if (uniFlag)
+                        uniMove.SetInstruct(cInd, time, "AIRHOVER", new SPoint(xV, yV));
+
+                } else if (FirstNCharChk(lPc, "airbrake")){
                     lPc = lPc.Substring(lPc.IndexOf(" ") + 1);
                     float xV = float.Parse(lPc.Substring(0, lPc.IndexOf(" ")));
                     lPc = lPc.Substring(lPc.IndexOf(" ") + 1);
@@ -2502,7 +2510,21 @@ public class Fighter : MonoBehaviour {
                         uniMove.SetInstruct(cInd, time, "AIRBRAKE", new SPoint(xV, yV));
                 }
                 cInd++;
-                    }
+            } else if (FirstNCharChk(line, "cons")) {
+                lPc = line.Substring(5);
+                if (FirstNCharChk(lPc, "end_pt"))//end velocity (SPoint) for anything
+                {
+                    lPc = lPc.Substring(lPc.IndexOf(" ") + 1);
+                    float xV = float.Parse(lPc.Substring(0, lPc.IndexOf(" ")));
+                    lPc = lPc.Substring(lPc.IndexOf(" ") + 1);
+                    float yV = float.Parse(lPc);
+                    if (atInd >= 0)
+                        moveCont[atInd].SetInstructEnd(cInd-1, new SPoint(xV, yV));
+                    else if (uniFlag)
+                        uniMove.SetInstructEnd(cInd-1, new SPoint(xV, yV));
+                }
+
+            }
                     if(FirstNCharChk(line, "</ATTACK>")){
 						atInd=-1;
 						cInd=0;
